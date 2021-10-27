@@ -31,7 +31,7 @@
                 QU8OTD1dd9gHCBviQB9TqntRZ5X7axjtuWjb2umY+owBYzAHZkp1HKI=
                 -----END CERTIFICATE-----
           bindUser:
-            type:  PASSWORD
+            type: PASSWORD
             username: foo
             password: bar
           userFormat: USER_DOMAIN
