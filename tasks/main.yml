@@ -1,5 +1,5 @@
 ---
-# tasks file for ansible-role-nginx_controller_user_role
+# tasks file for ansible-role-nginx_controller_auth_provider
 
 - name: Fail if required variables are not defined
   assert:
@@ -79,4 +79,3 @@
   fail:
     msg: "{{ nginx_controller_provider_current_status.json.currentStatus.provider.status }}"
   when: nginx_controller_provider_current_status.json.currentStatus.provider.status != "CONNECTED"
-

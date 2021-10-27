@@ -22,7 +22,7 @@
 #       bindUser:
 #         type:         # The bind method, PASSWORD
 #         username:     # The bind user
-#         password:     # The bind password 
+#         password:     # The bind password
 #       userFormat:           # The login format (USER_DOMAIN, UPN)
 #       defaultLoginDomain:   # The default domain for login
 #       domain:               # The domain DN
@@ -32,9 +32,7 @@
 #       groupSearchFilter:    # Filter to apply to group search ( (objectClass=group) )
 #       groupMemberAttribute: # Group attribute of user (memberOf)
 #       groupMappings:
-#         - external:         # External group name 
-#           internal:         
+#         - external:         # External group name
+#           internal:
 #             ref:            # Internal group ref (/platform/auth/groups/admin_group)
 #           caseSensitive:    # Case sesntive (true,false)
-
-
