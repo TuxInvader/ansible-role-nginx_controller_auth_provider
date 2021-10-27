@@ -9,7 +9,7 @@
         method: PUT
         body:
           httpRequest:
-            path: "/api/v1/platform/roles/rockstar"
+            path: "/api/v1/platform/auth/providers/ad_auth"
           times:
             atLeast: 2
             atMost: 2

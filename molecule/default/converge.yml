@@ -6,22 +6,49 @@
     nginx_controller_validate_certs: false
     nginx_controller_fqdn: mock-server.molecule-test:1080
     nginx_controller_auth_token: "ABC123"
-    nginx_controller_user_role:
+    nginx_controller_auth_provider:
       metadata:
-        name: rockstar
-        displayName: "The Rockstars"
-        description: "An elite group of individuals"
-        tags:  # an array of tags
-          - tagOne
-          - tagTwo
+        name: ad_auth
+        displayName: AD Auth
+        description: a description of the Auth Provider
       desiredState:
-        permissions:  # an array of endpoints, objects, and the level of access
-          - access: "READ"
-            path: "/services/environments/development"
-          - access: "WRITE"
-            path: "/services/environments/test"
+        provider:
+          type: ACTIVE_DIRECTORY
+          connection:
+            - uri: ldaps://ldap.management.lan
+              sslMode: REQUIRE
+              rawCa: |
+                -----BEGIN CERTIFICATE-----
+                MIIB1TCCAT4CCQDV5mPlzm9+izANBgkqhkiG9w0BAQUFADAvMS0wKwYDVQQDEyQ3
+                NTI3YmQ3Ny1hYjNlLTQ3NGItYWNlNy1lZWQ2MDUzOTMxZTcwHhcNMTUwNzA2MjI0
+                NTA3WhcNMjUwNzAzMjI0NTA3WjAvMS0wKwYDVQQDEyQ3NTI3YmQ3Ny1hYjNlLTQ3
+                NGItYWNlNy1lZWQ2MDUzOTMxZTcwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGB
+                ALNRHEirN6vQAIBtf+Ud2yfgZ308sqt/sR4Nh8h1XQdko8PxYOtsHHb98G7Q5bay
+                OfO/9JVlsnQMC48T+nT55PSpvaoLXSLP2JMPuuJt3uDGGKtVvzJvd8GNezFzxXyn
+                g3LUty81KoKPBRsmp1GiB+gl5OKo8znzPmw3O6/mKruLAgMBAAEwDQYJKoZIhvcN
+                AQEFBQADgYEACzoHUF8UV2Z6541Q2wKEA0UFUzmUjf/E1XwBO+1P15ZZ64uw34B4
+                1RwMPtAo9RY/PmICTWtNxWGxkzwb2JtDWtnxVER/lF8k2XcXPE76fxTHJF/BKk9J
+                QU8OTD1dd9gHCBviQB9TqntRZ5X7axjtuWjb2umY+owBYzAHZkp1HKI=
+                -----END CERTIFICATE-----
+          bindUser:
+            type:  PASSWORD
+            username: foo
+            password: bar
+          userFormat: USER_DOMAIN
+          defaultLoginDomain: nginx.com
+          domain: DC=nginx,DC=com
+          pollIntervalSec: 300
+          groupCacheTimeSec: 600
+          honorStaleGroups: true
+          groupSearchFilter: (objectClass=group)
+          groupMemberAttribute: memberOf
+          groupMappings:
+            - external: admins
+              internal:
+                ref: /platform/auth/groups/admin_group
+              caseSensitive: false
 
   tasks:
-    - name: Call User Role Role
+    - name: Call User Auth Provider Role
       include_role:
-        name: ansible-role-nginx_controller_user_role
+        name: ansible-role-nginx_controller_auth_provider

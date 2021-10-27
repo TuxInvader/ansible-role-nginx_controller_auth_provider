@@ -21,29 +21,60 @@
           Content-Type: application/json
         validate_certs: false
 
-    - name: Create user api PUT expectation for user role
+    - name: Create api POST expectation for auth provider role
+      uri:
+        url: "https://{{ inventory_hostname }}:1080/mockserver/expectation"
+        method: PUT
+        body:
+          httpRequest:
+            method: "POST"
+            path: "/api/v1/platform/auth/providers/ad_auth"
+          httpResponse:
+            statusCode: 202
+            body:
+              currentStatus:
+                provider:
+                  status: CONNECTED
+        status_code: 201
+        body_format: json
+        headers:
+          Content-Type: application/json
+        validate_certs: false
+
+    - name: Create api PUT expectation for auth provider role
       uri:
         url: "https://{{ inventory_hostname }}:1080/mockserver/expectation"
         method: PUT
         body:
           httpRequest:
             method: "PUT"
-            path: "/api/v1/platform/roles/rockstar"
+            path: "/api/v1/platform/auth/providers/ad_auth"
           httpResponse:
             statusCode: 202
             body:
               currentStatus:
-                state:
-                  selfConfigState:
-                    configured: 0
-                    configuring: 1
-                    deleting: 0
-                    error: 0
-                    isConfigured: false
-                    isConfiguring: true
-                    isDeleting: false
-                    isError: false
-                    total: 1
+                provider:
+                  status: CONNECTED
+        status_code: 201
+        body_format: json
+        headers:
+          Content-Type: application/json
+        validate_certs: false
+
+    - name: Create api GET expectation for auth provider role
+      uri:
+        url: "https://{{ inventory_hostname }}:1080/mockserver/expectation"
+        method: PUT
+        body:
+          httpRequest:
+            method: "GET"
+            path: "/api/v1/platform/auth/providers/ad_auth"
+          httpResponse:
+            statusCode: 200
+            body:
+              currentStatus:
+                provider:
+                  status: CONNECTED
         status_code: 201
         body_format: json
         headers:
