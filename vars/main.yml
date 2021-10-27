@@ -1,0 +1,40 @@
+---
+# vars file for ansible-role-nginx_controller_auth_provider
+
+# nginx_controller_auth_provider:
+#   metadata:
+#     name:  # the name of the user role
+#     displayName:   # a friendly display name for the user role (spaces and special characters allowed)
+#     description:  # a description of the user role
+#   desiredState:
+#     provider:
+#       type:             # The type of provider, ACTIVE_DIRECTORY
+#       connection:
+#         - uri:          # The ldap(s) url of the provider
+#           sslMode:      # SSL Mode (PLAIN_TEXT, REQUIRE, VERIFY_CA)
+#           rawCa: |
+#             -----BEGIN CERTIFICATE-----
+#             MIIFyjCCA7KgAwIBAgIJAP9cqU0MKsAtMA0GCSqGSIb3DQEBCwUAMHoxCzAJBgNV
+#             <-- snip -->
+#             GOy2S3QRVAIMJw8axbh3G5gzdj54/dUyX39ITTwHRQCLlKb2dTZII553ONj+ndqI
+#             fkifDFvo8zPc/vIxji4y3s2WFW4I5Fw6TprI1/R/8GWgN2bvQNVVWyLY/UauJg==
+#             -----END CERTIFICATE-----
+#       bindUser:
+#         type:         # The bind method, PASSWORD
+#         username:     # The bind user
+#         password:     # The bind password 
+#       userFormat:           # The login format (USER_DOMAIN, UPN)
+#       defaultLoginDomain:   # The default domain for login
+#       domain:               # The domain DN
+#       pollIntervalSec:      # Poll interval in seconds (300)
+#       groupCacheTimeSec:    # Cache time in seconds (600)
+#       honorStaleGroups:     # Use stale groups if AD unavailable (true,false)
+#       groupSearchFilter:    # Filter to apply to group search ( (objectClass=group) )
+#       groupMemberAttribute: # Group attribute of user (memberOf)
+#       groupMappings:
+#         - external:         # External group name 
+#           internal:         
+#             ref:            # Internal group ref (/platform/auth/groups/admin_group)
+#           caseSensitive:    # Case sesntive (true,false)
+
+

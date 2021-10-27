@@ -1,0 +1,31 @@
+---
+driver:
+  name: docker
+lint: |
+  set -e
+  yamllint .
+  ansible-lint --force-color
+platforms:
+  - name: mock-server
+    groups:
+      - mock_server
+    image: alpine:3.12
+    dockerfile: ../MockServerDockerfile
+    networks:
+      - name: molecule-test
+    ports:
+      - 1080:1080
+  - name: ubuntu-bionic
+    groups:
+      - controllers
+    image: ubuntu:bionic
+    dockerfile: ../Dockerfile.j2
+    networks:
+      - name: molecule-test
+provisioner:
+  name: ansible
+  playbooks:
+    prepare: prepare.yml
+    converge: converge.yml
+    verify: verify.yml
+  log: false

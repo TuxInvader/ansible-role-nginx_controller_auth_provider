@@ -1,0 +1,27 @@
+---
+- name: Converge
+  hosts: controllers
+
+  vars:
+    nginx_controller_validate_certs: false
+    nginx_controller_fqdn: mock-server.molecule-test:1080
+    nginx_controller_auth_token: "ABC123"
+    nginx_controller_user_role:
+      metadata:
+        name: rockstar
+        displayName: "The Rockstars"
+        description: "An elite group of individuals"
+        tags:  # an array of tags
+          - tagOne
+          - tagTwo
+      desiredState:
+        permissions:  # an array of endpoints, objects, and the level of access
+          - access: "READ"
+            path: "/services/environments/development"
+          - access: "WRITE"
+            path: "/services/environments/test"
+
+  tasks:
+    - name: Call User Role Role
+      include_role:
+        name: ansible-role-nginx_controller_user_role

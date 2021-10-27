@@ -1,0 +1,4 @@
+---
+# defaults file for ansible-role-nginx_controller_user_role
+
+nginx_controller_api_version: "api/v1"

@@ -1,0 +1,82 @@
+---
+# tasks file for ansible-role-nginx_controller_user_role
+
+- name: Fail if required variables are not defined
+  assert:
+    that: ("{{ item }} is defined") and ("{{ item }} | length > 0")
+  loop:
+    - nginx_controller_api_version
+    - nginx_controller_fqdn
+    - nginx_controller_auth_token
+    - nginx_controller_auth_provider.metadata.name
+
+- name: Form the Auth Provider url
+  set_fact:
+    nginx_controller_auth_provider_url: >-
+      https://{{ nginx_controller_fqdn }}/{{ nginx_controller_api_version }}/platform/auth/providers
+
+- name: Check if Provider exists
+  uri:
+    url: "{{ nginx_controller_auth_provider_url }}/{{ nginx_controller_auth_provider.metadata.name  }}"
+    method: "GET"
+    status_code:
+      - 200
+      - 404
+    return_content: true
+    validate_certs: "{{ nginx_controller_validate_certs | default(false) }}"
+    headers:
+      Cookie: "{{ nginx_controller_auth_token }}"
+  register: nginx_controller_provider_current_status
+
+- name: Set HTTP Method and URL for create/update
+  set_fact:
+    method: "{{ 'POST' if (nginx_controller_provider_current_status.status == 404) else 'PUT' }}"
+    nginx_upsert_url: "{{ nginx_controller_auth_provider_url }}{{ '/' ~ nginx_controller_auth_provider.metadata.name if (nginx_controller_provider_current_status.status == 200) }}"
+
+- name: POST or PUT the Auth Provider definition
+  uri:
+    url: "{{ nginx_upsert_url }}"
+    method: "{{ method }}"
+    body: "{{ nginx_controller_auth_provider }}"
+    body_format: json
+    status_code:
+      - 200
+      - 201
+      - 202
+    return_content: true
+    validate_certs: "{{ nginx_controller_validate_certs | default(false) }}"
+    headers:
+      Cookie: "{{ nginx_controller_auth_token }}"
+  register: nginx_controller_user_role_current_status
+  ignore_errors: false
+
+- name: Pause while system initiates changes
+  pause:
+    seconds: "2"
+
+- name: Confirm Provider is provisioned and not errored
+  uri:
+    url: "{{ nginx_controller_auth_provider_url }}/{{ nginx_controller_auth_provider.metadata.name  }}"
+    method: "GET"
+    status_code:
+      - 200
+      - 201
+      - 202
+    return_content: true
+    validate_certs: "{{ nginx_controller_validate_certs | default(false) }}"
+    headers:
+      Cookie: "{{ nginx_controller_auth_token }}"
+  register: nginx_controller_provider_current_status
+  until: (nginx_controller_provider_current_status is defined) and
+         (nginx_controller_provider_current_status.json.currentStatus.provider.status == "CONNECTED" )
+  retries: 50
+  delay: 2
+  failed_when: nginx_controller_provider_current_status.json.currentStatus.provider.status != "CONNECTED"
+  ignore_errors: true
+
+ # above simply errors but does not include the informative failure messages from Controller
+- name: Report failure details from Controller
+  fail:
+    msg: "{{ nginx_controller_provider_current_status.json.currentStatus.provider.status }}"
+  when: nginx_controller_provider_current_status.json.currentStatus.provider.status != "CONNECTED"
+
