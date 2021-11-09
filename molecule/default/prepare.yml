@@ -21,6 +21,24 @@
           Content-Type: application/json
         validate_certs: false
 
+    - name: Create api GET expectation for auth provider role
+      uri:
+        url: "https://{{ inventory_hostname }}:1080/mockserver/expectation"
+        method: PUT
+        body:
+          httpRequest:
+            method: "GET"
+            path: "/api/v1/platform/auth/providers/ad_auth"
+          httpResponse:
+            statusCode: 404
+          times:
+            remainingTimes: 1
+        status_code: 201
+        body_format: json
+        headers:
+          Content-Type: application/json
+        validate_certs: false
+
     - name: Create api POST expectation for auth provider role
       uri:
         url: "https://{{ inventory_hostname }}:1080/mockserver/expectation"
@@ -28,29 +46,9 @@
         body:
           httpRequest:
             method: "POST"
-            path: "/api/v1/platform/auth/providers/ad_auth"
+            path: "/api/v1/platform/auth/providers"
           httpResponse:
-            statusCode: 202
-            body:
-              currentStatus:
-                provider:
-                  status: CONNECTED
-        status_code: 201
-        body_format: json
-        headers:
-          Content-Type: application/json
-        validate_certs: false
-
-    - name: Create api PUT expectation for auth provider role
-      uri:
-        url: "https://{{ inventory_hostname }}:1080/mockserver/expectation"
-        method: PUT
-        body:
-          httpRequest:
-            method: "PUT"
-            path: "/api/v1/platform/auth/providers/ad_auth"
-          httpResponse:
-            statusCode: 202
+            statusCode: 201
             body:
               currentStatus:
                 provider:
@@ -71,6 +69,28 @@
             path: "/api/v1/platform/auth/providers/ad_auth"
           httpResponse:
             statusCode: 200
+            body:
+              currentStatus:
+                provider:
+                  status: CONNECTED
+          times:
+            unlimited: true
+        status_code: 201
+        body_format: json
+        headers:
+          Content-Type: application/json
+        validate_certs: false
+
+    - name: Create api PUT expectation for auth provider role
+      uri:
+        url: "https://{{ inventory_hostname }}:1080/mockserver/expectation"
+        method: PUT
+        body:
+          httpRequest:
+            method: "PUT"
+            path: "/api/v1/platform/auth/providers/ad_auth"
+          httpResponse:
+            statusCode: 201
             body:
               currentStatus:
                 provider:

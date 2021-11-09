@@ -3,16 +3,49 @@
   hosts: mock_server
   connection: local
   tasks:
-    - name: Check that the user PUT request was sent to the mock controller exactly 2 times per docker instance (includes the idempotence test)
+    - name: Check that the user POST request was sent to the mock controller exactly once
       uri:
         url: "https://{{ inventory_hostname }}:1080/mockserver/verify"
         method: PUT
         body:
           httpRequest:
+            path: "/api/v1/platform/auth/providers"
+            method: "POST"
+          times:
+            atLeast: 1
+            atMost: 1
+        status_code: 202
+        body_format: json
+        headers:
+          Content-Type: application/json
+        validate_certs: false
+    - name: Check that the user PUT request was sent to the mock controller exactly once
+      uri:
+        url: "https://{{ inventory_hostname }}:1080/mockserver/verify"
+        method: PUT
+        body:
+          httpRequest:
+            method: "PUT"
             path: "/api/v1/platform/auth/providers/ad_auth"
           times:
-            atLeast: 2
-            atMost: 2
+            atLeast: 1
+            atMost: 1
+        status_code: 202
+        body_format: json
+        headers:
+          Content-Type: application/json
+        validate_certs: false
+    - name: Check that the user GET request was sent to the mock controller atleast 4 times
+      uri:
+        url: "https://{{ inventory_hostname }}:1080/mockserver/verify"
+        method: PUT
+        body:
+          httpRequest:
+            method: "GET"
+            path: "/api/v1/platform/auth/providers/ad_auth"
+          times:
+            atLeast: 4
+            atMost: 6
         status_code: 202
         body_format: json
         headers:
